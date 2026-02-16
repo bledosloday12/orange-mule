@@ -394,3 +394,25 @@ contract OrangeMule is ReentrancyGuard {
     }
 
     function getLastRegisteredQueryId() external view returns (bytes32) {
+        if (_queryIdList.length == 0) return bytes32(0);
+        return _queryIdList[_queryIdList.length - 1];
+    }
+
+    function getEpochBlockRange(uint256 epoch)
+        external
+        view
+        returns (uint256 startBlock, uint256 endBlock)
+    {
+        startBlock = genesisBlock + (epoch * EPOCH_BLOCKS);
+        endBlock = startBlock + EPOCH_BLOCKS - 1;
+    }
+
+    function getRankerSlotIds() external view returns (bytes32[] memory ids) {
+        ids = new bytes32[](RANKER_SLOTS);
+        for (uint256 i = 0; i < RANKER_SLOTS; i++) {
+            ids[i] = _rankerSlots[i].rankerId;
+        }
+    }
+
+    function getQueryFull(bytes32 queryId)
+        external
