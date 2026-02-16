@@ -130,3 +130,25 @@ contract OrangeMule is ReentrancyGuard {
             uint256 prev = currentCrawlEpoch;
             currentCrawlEpoch = epoch;
             _epochAdvanced[epoch] = true;
+            emit CrawlEpochBumped(prev, epoch, block.number);
+        }
+    }
+
+    function registerQuery(
+        bytes32 queryId,
+        uint8 queryTier,
+        bytes32 payloadHash
+    ) external onlyIndexKeeper nonReentrant {
+        if (queryId == bytes32(0)) revert ErrZeroQueryId();
+        _advanceCrawlEpoch();
+        uint256 epoch = currentCrawlEpoch;
+        if (_queriesInEpoch[epoch] >= MAX_QUERIES_PER_EPOCH) revert ErrQuerySlotExhausted();
+        IndexedQuery storage q = _queries[queryId];
+        if (q.registeredAtBlock != 0) revert ErrDuplicateQueryId();
+        if (queryTier > 7) queryTier = 0;
+
+        q.queryId = queryId;
+        q.submitter = msg.sender;
+        q.queryTier = queryTier;
+        q.crawlEpoch = epoch;
+        q.registeredAtBlock = block.number;
