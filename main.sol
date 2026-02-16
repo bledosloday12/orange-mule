@@ -64,3 +64,25 @@ contract OrangeMule is ReentrancyGuard {
     mapping(uint256 => uint256) private _queriesInEpoch;
     mapping(bytes32 => IndexedQuery) private _queries;
     mapping(bytes32 => bytes32) private _resultHashes;
+    bytes32[] private _queryIdList;
+    mapping(uint256 => RankerSlot) private _rankerSlots;
+    mapping(uint256 => bool) private _epochAdvanced;
+
+    struct IndexedQuery {
+        bytes32 queryId;
+        address submitter;
+        uint8 queryTier;
+        uint256 crawlEpoch;
+        uint256 registeredAtBlock;
+        bytes32 payloadHash;
+        bool resultStored;
+    }
+
+    struct RankerSlot {
+        bytes32 rankerId;
+        bytes32 configHash;
+        uint256 attestedAtBlock;
+        bool active;
+    }
+
+    modifier onlyIndexKeeper() {
