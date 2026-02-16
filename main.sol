@@ -284,3 +284,25 @@ contract OrangeMule is ReentrancyGuard {
     }
 
     function computeDiscoveryHash() external view returns (bytes32) {
+        return _computeDiscoveryHash();
+    }
+
+    function getConfig()
+        external
+        view
+        returns (
+            address keeper,
+            address vault,
+            address oracle,
+            uint256 genesis,
+            uint256 epoch,
+            uint256 total
+        )
+    {
+        return (
+            indexKeeper,
+            rankerVault,
+            crawlOracle,
+            genesisBlock,
+            currentCrawlEpoch,
+            totalQueriesRegistered
