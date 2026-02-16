@@ -240,3 +240,25 @@ contract OrangeMule is ReentrancyGuard {
             uint256 attestedAtBlock,
             bool active
         )
+    {
+        if (slotIndex >= RANKER_SLOTS) revert ErrRankerSlotInvalid();
+        RankerSlot storage s = _rankerSlots[slotIndex];
+        return (s.rankerId, s.configHash, s.attestedAtBlock, s.active);
+    }
+
+    function getQueryIdAt(uint256 index) external view returns (bytes32) {
+        require(index < _queryIdList.length, "OrangeMule: index out of range");
+        return _queryIdList[index];
+    }
+
+    function totalQueries() external view returns (uint256) {
+        return _queryIdList.length;
+    }
+
+    function queriesInEpoch(uint256 epoch) external view returns (uint256) {
+        return _queriesInEpoch[epoch];
+    }
+
+    function epochForBlock(uint256 blockNum) external view returns (uint256) {
+        return _epochForBlock(blockNum);
+    }
