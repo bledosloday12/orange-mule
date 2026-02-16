@@ -108,3 +108,25 @@ contract OrangeMule is ReentrancyGuard {
         discoverySeed = keccak256(
             abi.encodePacked(
                 block.chainid,
+                block.prevrandao,
+                block.timestamp,
+                blockhash(block.number - 1),
+                "OrangeMule_Discovery_v2"
+            )
+        );
+        currentCrawlEpoch = 0;
+        totalQueriesRegistered = 0;
+        discoveryPoolBalance = 0;
+    }
+
+    function _epochForBlock(uint256 blockNum) internal view returns (uint256) {
+        if (blockNum <= genesisBlock) return 0;
+        return (blockNum - genesisBlock) / EPOCH_BLOCKS;
+    }
+
+    function _advanceCrawlEpoch() internal {
+        uint256 epoch = _epochForBlock(block.number);
+        if (epoch > currentCrawlEpoch && epoch <= MAX_CRAWL_EPOCHS) {
+            uint256 prev = currentCrawlEpoch;
+            currentCrawlEpoch = epoch;
+            _epochAdvanced[epoch] = true;
