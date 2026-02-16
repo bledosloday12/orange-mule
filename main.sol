@@ -86,3 +86,25 @@ contract OrangeMule is ReentrancyGuard {
     }
 
     modifier onlyIndexKeeper() {
+        if (msg.sender != indexKeeper) revert ErrNotIndexKeeper();
+        _;
+    }
+
+    modifier onlyRankerVault() {
+        if (msg.sender != rankerVault) revert ErrNotRankerVault();
+        _;
+    }
+
+    modifier onlyCrawlOracle() {
+        if (msg.sender != crawlOracle) revert ErrNotCrawlOracle();
+        _;
+    }
+
+    constructor() {
+        indexKeeper = address(0x8c3Ea1F5b7D9c2B4e6A0d8F1a3C5e7B9d2F4a6);
+        rankerVault = address(0xD2f4A6c8E0b3D5f7A9c1E3b6D8f0A2c4E6b9d1);
+        crawlOracle = address(0xF5a7C9e1B3d6F8a0C2e4B7d9F1a3c6E8b0D2f4);
+        genesisBlock = block.number;
+        discoverySeed = keccak256(
+            abi.encodePacked(
+                block.chainid,
