@@ -20,3 +20,25 @@ contract OrangeMule is ReentrancyGuard {
     );
     event RankerAttested(
         bytes32 indexed rankerId,
+        uint8 slotIndex,
+        uint256 attestedAtBlock,
+        bytes32 configHash
+    );
+    event CrawlEpochBumped(uint256 previousEpoch, uint256 newEpoch, uint256 atBlock);
+    event ResultHashStored(
+        bytes32 indexed queryId,
+        bytes32 resultHash,
+        uint256 storedAtBlock
+    );
+    event DiscoveryPoolTopped(uint256 amount, address indexed from, uint256 newBalance);
+
+    error ErrQuerySlotExhausted();
+    error ErrNotIndexKeeper();
+    error ErrEpochWindowNotReached();
+    error ErrRankerSlotInvalid();
+    error ErrDuplicateQueryId();
+    error ErrQueryNotFound();
+    error ErrZeroQueryId();
+    error ErrCrawlCapReached();
+    error ErrNotRankerVault();
+    error ErrNotCrawlOracle();
