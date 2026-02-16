@@ -416,3 +416,25 @@ contract OrangeMule is ReentrancyGuard {
 
     function getQueryFull(bytes32 queryId)
         external
+        view
+        returns (
+            bytes32 id,
+            address submitter,
+            uint8 queryTier,
+            uint256 crawlEpoch,
+            uint256 registeredAtBlock,
+            bytes32 payloadHash,
+            bool resultStored,
+            bytes32 resultHash
+        )
+    {
+        IndexedQuery storage q = _queries[queryId];
+        if (q.registeredAtBlock == 0) revert ErrQueryNotFound();
+        return (
+            q.queryId,
+            q.submitter,
+            q.queryTier,
+            q.crawlEpoch,
+            q.registeredAtBlock,
+            q.payloadHash,
+            q.resultStored,
