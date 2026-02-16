@@ -438,3 +438,8 @@ contract OrangeMule is ReentrancyGuard {
             q.registeredAtBlock,
             q.payloadHash,
             q.resultStored,
+            _resultHashes[queryId]
+        );
+    }
+}
+
