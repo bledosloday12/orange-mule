@@ -42,3 +42,25 @@ contract OrangeMule is ReentrancyGuard {
     error ErrCrawlCapReached();
     error ErrNotRankerVault();
     error ErrNotCrawlOracle();
+    error ErrResultAlreadyStored();
+    error ErrZeroResultHash();
+
+    uint256 public constant MAX_QUERIES_PER_EPOCH = 256;
+    uint256 public constant RANKER_SLOTS = 16;
+    uint256 public constant EPOCH_BLOCKS = 64;
+    uint256 public constant MAX_CRAWL_EPOCHS = 2048;
+    bytes32 public constant DISCOVERY_DOMAIN =
+        bytes32(0xa1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1);
+
+    address public immutable indexKeeper;
+    address public immutable rankerVault;
+    address public immutable crawlOracle;
+    uint256 public immutable genesisBlock;
+    bytes32 public immutable discoverySeed;
+
+    uint256 public currentCrawlEpoch;
+    uint256 public totalQueriesRegistered;
+    uint256 public discoveryPoolBalance;
+    mapping(uint256 => uint256) private _queriesInEpoch;
+    mapping(bytes32 => IndexedQuery) private _queries;
+    mapping(bytes32 => bytes32) private _resultHashes;
