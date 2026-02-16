@@ -196,3 +196,25 @@ contract OrangeMule is ReentrancyGuard {
     function bumpCrawlEpoch() external onlyCrawlOracle nonReentrant {
         _advanceCrawlEpoch();
     }
+
+    function topDiscoveryPool() external payable nonReentrant {
+        if (msg.value == 0) return;
+        discoveryPoolBalance += msg.value;
+        emit DiscoveryPoolTopped(msg.value, msg.sender, discoveryPoolBalance);
+    }
+
+    function getQuery(bytes32 queryId)
+        external
+        view
+        returns (
+            address submitter,
+            uint8 queryTier,
+            uint256 crawlEpoch,
+            uint256 registeredAtBlock,
+            bytes32 payloadHash,
+            bool resultStored
+        )
+    {
+        IndexedQuery storage q = _queries[queryId];
+        if (q.registeredAtBlock == 0) revert ErrQueryNotFound();
+        return (
