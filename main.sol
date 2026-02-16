@@ -174,3 +174,25 @@ contract OrangeMule is ReentrancyGuard {
         emit RankerAttested(rankerId, slotIndex, block.number, configHash);
     }
 
+    function deactivateRankerSlot(uint8 slotIndex) external onlyRankerVault nonReentrant {
+        if (slotIndex >= RANKER_SLOTS) revert ErrRankerSlotInvalid();
+        _rankerSlots[slotIndex].active = false;
+    }
+
+    function storeResult(bytes32 queryId, bytes32 resultHash)
+        external
+        onlyIndexKeeper
+        nonReentrant
+    {
+        if (resultHash == bytes32(0)) revert ErrZeroResultHash();
+        IndexedQuery storage q = _queries[queryId];
+        if (q.registeredAtBlock == 0) revert ErrQueryNotFound();
+        if (q.resultStored) revert ErrResultAlreadyStored();
+        q.resultStored = true;
+        _resultHashes[queryId] = resultHash;
+        emit ResultHashStored(queryId, resultHash, block.number);
+    }
+
+    function bumpCrawlEpoch() external onlyCrawlOracle nonReentrant {
+        _advanceCrawlEpoch();
+    }
